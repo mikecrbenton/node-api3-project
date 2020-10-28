@@ -1,6 +1,8 @@
 const express = require('express');
-
+const users = require('./userDb')
 const router = express.Router();
+
+const { validateUserID } =  require('../middleware/user')
 
 router.post('/', (req, res) => {
   // do your magic!
@@ -10,16 +12,32 @@ router.post('/:id/posts', (req, res) => {
   // do your magic!
 });
 
+// COMPLETE
 router.get('/', (req, res) => {
-  // do your magic!
+  users.get()
+   .then( (users) => {
+      console.log("in get")
+      res.status(200).json(users)
+   })
+   .catch( (err) => {
+      next(err)
+   })
 });
 
-router.get('/:id', (req, res) => {
-  // do your magic!
+// COMPLETE - W/MIDDLEWARE
+router.get('/:id', validateUserID(), (req, res) => {
+   res.status(200).json(req.user)
 });
 
-router.get('/:id/posts', (req, res) => {
-  // do your magic!
+// COMPLETE - W/MIDDLEWARE
+router.get('/:id/posts', validateUserID(), (req, res) => {
+   users.getUserPosts(req.params.id)
+      .then( (response) => {
+         res.json(response)
+      })
+      .catch( (error) => {
+         next(error)
+      })
 });
 
 router.delete('/:id', (req, res) => {
