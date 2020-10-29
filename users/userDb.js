@@ -7,6 +7,7 @@ module.exports = {
   insert,
   update,
   remove,
+  addUserPost
 };
 
 function get() {
@@ -44,4 +45,11 @@ function remove(id) {
   return db('users')
     .where('id', id)
     .del();
+}
+
+async function addUserPost(userId, post) {
+	const data = { user_id: userId, ...post }
+	const [id] = await db("posts").insert(data)
+
+	return getUserPosts(userId)
 }
